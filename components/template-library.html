@@ -1,0 +1,20 @@
+<!-- TEMPLATES LIBRARY -->
+<div v-if="showTemplateLibrary" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-auto">
+  <div class="bg-gray-900 border border-green-800/30 rounded-2xl w-full max-w-2xl">
+    <div class="p-5 border-b border-green-800/20 flex items-center justify-between">
+      <h3 class="font-bold text-green-400">Template Library</h3>
+      <button @click="showTemplateLibrary=false" class="text-green-300/40 hover:text-green-300 text-xl">✕</button>
+    </div>
+    <div class="p-5 max-h-96 overflow-y-auto">
+      <div v-if="defaultQuestions.length===0" class="text-center text-green-300/30">Loading templates...</div>
+      <div v-for="template in defaultQuestions" :key="template.id" class="mb-4 flex items-start gap-3 border border-green-800/20 rounded-xl p-3 hover:border-green-600/30 transition-all">
+        <div class="flex-1">
+          <span class="text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full font-bold">{{categoryEmoji(template.category)}}</span>
+          <p class="text-sm font-bold mt-1">{{template.question}}</p>
+          <p class="text-xs text-green-300/40 mt-1">4 choices • {{template.hasMiniGame?'With mini-game':'Decision-based'}}</p>
+        </div>
+        <button @click="addTemplateToEvents(template)" class="bg-green-500 hover:bg-green-400 text-white text-xs font-bold px-3 py-2 rounded-lg shrink-0">Use</button>
+      </div>
+    </div>
+  </div>
+</div>

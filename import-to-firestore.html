@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Import to Firestore</title>
+</head>
+<body>
+    <h1>Importing Climate Questions...</h1>
+    <div id="status"></div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyAbNa5ID6uB-yWPE1HXPL6b2fS7Bkxa1qo",
+            authDomain: "planetcare-6460f.firebaseapp.com",
+            projectId: "planetcare-6460f",
+            storageBucket: "planetcare-6460f.firebasestorage.app",
+            messagingSenderId: "744773599560",
+            appId: "1:744773599560:web:2d5d2ae016a2996ead337d"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        const data = {
+            // PASTE THE ENTIRE JSON CONTENT HERE
+        };
+        
+        async function importData() {
+            const status = document.getElementById('status');
+            
+            // Import events
+            for (const [id, eventData] of Object.entries(data.events)) {
+                try {
+                    await setDoc(doc(db, 'events', id), eventData);
+                    status.innerHTML += `<p>✅ Imported event: ${id}</p>`;
+                } catch (e) {
+                    status.innerHTML += `<p>❌ Failed: ${id} - ${e.message}</p>`;
+                }
+            }
+            
+            // Import template
+            for (const [id, templateData] of Object.entries(data.templates)) {
+                try {
+                    await setDoc(doc(db, 'templates', id), templateData);
+                    status.innerHTML += `<p>✅ Imported template: ${id}</p>`;
+                } catch (e) {
+                    status.innerHTML += `<p>❌ Failed: ${id} - ${e.message}</p>`;
+                }
+            }
+            
+            status.innerHTML += '<h2>🎉 Import Complete!</h2>';
+        }
+        
+        importData();
+    </script>
+</body>
+</html>

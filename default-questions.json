@@ -1,0 +1,334 @@
+{
+  "defaultEvents": [
+    {
+      "id": "q001",
+      "title": "Plastic Bottle Decision",
+      "question": "You finish drinking water from a plastic bottle. What do you do?",
+      "category": "waste",
+      "choices": [
+        {
+          "text": "Throw it in the recycling bin",
+          "effect": "good",
+          "points": 10,
+          "consequence": "The bottle gets processed and recycled into new products!"
+        },
+        {
+          "text": "Throw it in the trash",
+          "effect": "bad",
+          "points": -5,
+          "consequence": "It ends up in a landfill and takes 450+ years to decompose."
+        },
+        {
+          "text": "Litter it on the street",
+          "effect": "bad",
+          "points": -15,
+          "consequence": "Ocean animals may mistake it for food. Devastating!"
+        },
+        {
+          "text": "Reuse it as a water bottle",
+          "effect": "good",
+          "points": 15,
+          "consequence": "Zero waste! You've reduced consumption and saved money."
+        }
+      ],
+      "hasMiniGame": false
+    },
+    {
+      "id": "q002",
+      "title": "Energy at Home",
+      "question": "It's a hot day. How do you cool down your room?",
+      "category": "energy",
+      "choices": [
+        {
+          "text": "Turn on the AC at maximum",
+          "effect": "bad",
+          "points": -10,
+          "consequence": "Your carbon footprint skyrockets. High electricity bill incoming!"
+        },
+        {
+          "text": "Open windows and use a fan",
+          "effect": "good",
+          "points": 12,
+          "consequence": "Natural ventilation saves energy and money!"
+        },
+        {
+          "text": "Close all blinds and stay in shade",
+          "effect": "neutral",
+          "points": 5,
+          "consequence": "Good passive cooling, but limited effect."
+        },
+        {
+          "text": "Turn on AC but keep it at 25°C",
+          "effect": "good",
+          "points": 8,
+          "consequence": "Balanced comfort and energy efficiency."
+        }
+      ],
+      "hasMiniGame": false
+    },
+    {
+      "id": "q003",
+      "title": "Water Usage",
+      "question": "How long should you shower to conserve water?",
+      "category": "water",
+      "choices": [
+        {
+          "text": "Less than 5 minutes",
+          "effect": "good",
+          "points": 15,
+          "consequence": "You saved 25+ gallons of water! 💧"
+        },
+        {
+          "text": "10-15 minutes",
+          "effect": "neutral",
+          "points": 3,
+          "consequence": "Average usage. Could do better!"
+        },
+        {
+          "text": "20+ minutes with music",
+          "effect": "bad",
+          "points": -8,
+          "consequence": "You wasted 50+ gallons. The planet is thirsty!"
+        },
+        {
+          "text": "2 minutes (speed run!)",
+          "effect": "good",
+          "points": 20,
+          "consequence": "Champion water saver! 🏆"
+        }
+      ],
+      "hasMiniGame": false
+    },
+    {
+      "id": "q004",
+      "title": "Transportation Choice",
+      "question": "You need to go to school. What's your best choice?",
+      "category": "climate",
+      "choices": [
+        {
+          "text": "Walk or bike",
+          "effect": "good",
+          "points": 20,
+          "consequence": "Zero emissions + exercise! You're a climate hero! 🚴"
+        },
+        {
+          "text": "Take public transport (bus/train)",
+          "effect": "good",
+          "points": 15,
+          "consequence": "Much better than cars! You reduced your carbon footprint."
+        },
+        {
+          "text": "Ask parents for a ride",
+          "effect": "neutral",
+          "points": 5,
+          "consequence": "Cars emit CO2. Consider carpooling next time."
+        },
+        {
+          "text": "Drive a gas-guzzler SUV alone",
+          "effect": "bad",
+          "points": -15,
+          "consequence": "High emissions! This is a major carbon producer."
+        }
+      ],
+      "hasMiniGame": false
+    },
+    {
+      "id": "q005",
+      "title": "Forest Protection",
+      "question": "You discover a company cutting down a forest. What do you do?",
+      "category": "forest",
+      "choices": [
+        {
+          "text": "Report to environmental authorities",
+          "effect": "good",
+          "points": 18,
+          "consequence": "Great activism! You helped protect wildlife habitats."
+        },
+        {
+          "text": "Organize a protest with friends",
+          "effect": "good",
+          "points": 20,
+          "consequence": "Public awareness is powerful! You're making a difference!"
+        },
+        {
+          "text": "Ignore it, it's not your problem",
+          "effect": "bad",
+          "points": -20,
+          "consequence": "Forests are Earth's lungs. Inaction has consequences."
+        },
+        {
+          "text": "Write a petition online",
+          "effect": "good",
+          "points": 10,
+          "consequence": "Digital activism counts! Every voice matters."
+        }
+      ],
+      "hasMiniGame": false
+    },
+    {
+      "id": "q006",
+      "title": "Food Choices",
+      "question": "What should you choose for lunch to help the environment?",
+      "category": "climate",
+      "choices": [
+        {
+          "text": "Local vegetables and fruits",
+          "effect": "good",
+          "points": 16,
+          "consequence": "Sustainable and healthy! No carbon emissions from shipping."
+        },
+        {
+          "text": "Beef imported from across the world",
+          "effect": "bad",
+          "points": -12,
+          "consequence": "Beef has the highest carbon footprint. Plus shipping!"
+        },
+        {
+          "text": "Plant-based protein (beans, tofu)",
+          "effect": "good",
+          "points": 18,
+          "consequence": "Excellent choice! 90% lower carbon than beef! 🌱"
+        },
+        {
+          "text": "Chicken from local farm",
+          "effect": "good",
+          "points": 12,
+          "consequence": "Better option than beef. Local is great!"
+        }
+      ],
+      "hasMiniGame": false
+    },
+    {
+      "id": "q007",
+      "title": "Plastic vs Paper",
+      "question": "You're buying groceries. Choose your bags:",
+      "category": "waste",
+      "choices": [
+        {
+          "text": "Reusable cloth bags (bring your own)",
+          "effect": "good",
+          "points": 20,
+          "consequence": "Best choice! Reusable items are the future! ♻️"
+        },
+        {
+          "text": "Single-use plastic bags",
+          "effect": "bad",
+          "points": -15,
+          "consequence": "Plastic ends up in oceans and harms wildlife."
+        },
+        {
+          "text": "Paper bags",
+          "effect": "neutral",
+          "points": 8,
+          "consequence": "Better than plastic, but trees were cut. Not ideal."
+        },
+        {
+          "text": "Ask for no bags, carry items myself",
+          "effect": "good",
+          "points": 18,
+          "consequence": "Perfect! Zero waste solution! 🎉"
+        }
+      ],
+      "hasMiniGame": false
+    },
+    {
+      "id": "q008",
+      "title": "Electronics Disposal",
+      "question": "Your old phone is broken. What happens to it?",
+      "category": "waste",
+      "choices": [
+        {
+          "text": "Take it to an e-waste recycling center",
+          "effect": "good",
+          "points": 17,
+          "consequence": "Metals are recovered and reused. Responsible choice!"
+        },
+        {
+          "text": "Throw it in the trash",
+          "effect": "bad",
+          "points": -18,
+          "consequence": "Toxic materials leak into soil. Massive pollution!"
+        },
+        {
+          "text": "Give it to a friend to refurbish",
+          "effect": "good",
+          "points": 19,
+          "consequence": "Circular economy! More phones = less manufacturing!"
+        },
+        {
+          "text": "Leave it to rot in a drawer",
+          "effect": "bad",
+          "points": -5,
+          "consequence": "Missed opportunity to recycle. Eventually it becomes e-waste."
+        }
+      ],
+      "hasMiniGame": false
+    },
+    {
+      "id": "q009",
+      "title": "Climate Activism",
+      "question": "A company pollutes a river. You have evidence. What do you do?",
+      "category": "climate",
+      "choices": [
+        {
+          "text": "Post evidence on social media",
+          "effect": "good",
+          "points": 14,
+          "consequence": "Public pressure works! Awareness is the first step."
+        },
+        {
+          "text": "Report to regulatory agencies",
+          "effect": "good",
+          "points": 18,
+          "consequence": "Official action! You triggered enforcement."
+        },
+        {
+          "text": "Tell your friends casually",
+          "effect": "neutral",
+          "points": 3,
+          "consequence": "Awareness helps, but limited impact."
+        },
+        {
+          "text": "Do nothing, you're just one person",
+          "effect": "bad",
+          "points": -20,
+          "consequence": "Silence = complicity. Every voice matters!"
+        }
+      ],
+      "hasMiniGame": false
+    },
+    {
+      "id": "q010",
+      "title": "Renewable Energy",
+      "question": "Your family wants to install solar panels. React:",
+      "category": "energy",
+      "choices": [
+        {
+          "text": "Strongly support it!",
+          "effect": "good",
+          "points": 20,
+          "consequence": "Renewable energy hero! This prevents tons of CO2/year."
+        },
+        {
+          "text": "It's too expensive, forget it",
+          "effect": "bad",
+          "points": -8,
+          "consequence": "Worth it long-term. Government subsidies exist!"
+        },
+        {
+          "text": "Push for other family discussions too",
+          "effect": "good",
+          "points": 22,
+          "consequence": "You're a climate leader! Change starts at home! 🏡"
+        },
+        {
+          "text": "Shrug, doesn't affect me",
+          "effect": "bad",
+          "points": -5,
+          "consequence": "Your future depends on energy choices now!"
+        }
+      ],
+      "hasMiniGame": false
+    }
+  ]
+}

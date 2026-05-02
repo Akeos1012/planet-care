@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix PlanetCare Events</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #0a1a0f; color: white; }
+        #status { margin-top: 20px; }
+        .success { color: #2ecc71; }
+        .error { color: #e74c3c; }
+        button { padding: 15px 30px; font-size: 18px; background: #2ecc71; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🌍 PlanetCare Event Fixer</h1>
+    <p>Click the button below to fix your events:</p>
+    <button onclick="fixEvents()">🔧 Fix My Events</button>
+    <div id="status"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyAbNa5ID6uB-yWPE1HXPL6b2fS7Bkxa1qo",
+            authDomain: "planetcare-6460f.firebaseapp.com",
+            projectId: "planetcare-6460f",
+            storageBucket: "planetcare-6460f.firebasestorage.app",
+            messagingSenderId: "744773599560",
+            appId: "1:744773599560:web:2d5d2ae016a2996ead337d"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const teacherId = "HQErGYc1tNan1tpaslwGI4hlq753";
+        
+        window.fixEvents = async function() {
+            const status = document.getElementById('status');
+            status.innerHTML = '<p>⏳ Working...</p>';
+            
+            try {
+                // Create climate1
+                await setDoc(doc(db, 'events', 'climate1'), {
+                    question: "You finish drinking water from a plastic bottle. What do you do?",
+                    category: "waste",
+                    hasMiniGame: false,
+                    teacherId: teacherId,
+                    choices: [
+                        {text: "Throw it in the recycling bin", effect: "good"},
+                        {text: "Throw it in the trash", effect: "bad"},
+                        {text: "Litter it on the street", effect: "bad"},
+                        {text: "Reuse it as a water bottle", effect: "good"}
+                    ]
+                });
+                status.innerHTML += '<p class="success">✅ Created climate1</p>';
+                
+                // Create climate2
+                await setDoc(doc(db, 'events', 'climate2'), {
+                    question: "It's a hot day. How do you cool down your room?",
+                    category: "energy",
+                    hasMiniGame: false,
+                    teacherId: teacherId,
+                    choices: [
+                        {text: "Turn on AC at maximum", effect: "bad"},
+                        {text: "Open windows and use a fan", effect: "good"},
+                        {text: "Close blinds and stay in shade", effect: "neutral"},
+                        {text: "Turn on AC at 25°C", effect: "good"}
+                    ]
+                });
+                status.innerHTML += '<p class="success">✅ Created climate2</p>';
+                
+                // Create climate3
+                await setDoc(doc(db, 'events', 'climate3'), {
+                    question: "How long should you shower to conserve water?",
+                    category: "water",
+                    hasMiniGame: false,
+                    teacherId: teacherId,
+                    choices: [
+                        {text: "Less than 5 minutes", effect: "good"},
+                        {text: "10-15 minutes", effect: "neutral"},
+                        {text: "20+ minutes", effect: "bad"},
+                        {text: "2 minutes", effect: "good"}
+                    ]
+                });
+                status.innerHTML += '<p class="success">✅ Created climate3</p>';
+                
+                // Create climate4
+                await setDoc(doc(db, 'events', 'climate4'), {
+                    question: "You need to go to school. What's your best choice?",
+                    category: "climate",
+                    hasMiniGame: false,
+                    teacherId: teacherId,
+                    choices: [
+                        {text: "Walk or bike", effect: "good"},
+                        {text: "Take public transport", effect: "good"},
+                        {text: "Ask parents for ride", effect: "neutral"},
+                        {text: "Drive SUV alone", effect: "bad"}
+                    ]
+                });
+                status.innerHTML += '<p class="success">✅ Created climate4</p>';
+                
+                // Create climate5
+                await setDoc(doc(db, 'events', 'climate5'), {
+                    question: "You discover a company cutting down a forest. What do you do?",
+                    category: "forest",
+                    hasMiniGame: false,
+                    teacherId: teacherId,
+                    choices: [
+                        {text: "Report to authorities", effect: "good"},
+                        {text: "Organize a protest", effect: "good"},
+                        {text: "Ignore it", effect: "bad"},
+                        {text: "Write a petition", effect: "good"}
+                    ]
+                });
+                status.innerHTML += '<p class="success">✅ Created climate5</p>';
+                
+                // Update template
+                await setDoc(doc(db, 'templates', 'default'), {
+                    title: "Climate Basics",
+                    events: ["climate1", "climate2", "climate3", "climate4", "climate5"],
+                    eventCount: 5,
+                    teacherId: teacherId,
+                    isPublic: true
+                });
+                status.innerHTML += '<p class="success">✅ Updated template</p>';
+                
+                status.innerHTML += '<h2>🎉 ALL DONE!</h2>';
+                status.innerHTML += '<p><strong>Now:</strong></p>';
+                status.innerHTML += '<ol>';
+                status.innerHTML += '<li>Close this page</li>';
+                status.innerHTML += '<li>Refresh your teacher panel</li>';
+                status.innerHTML += '<li>Create a NEW session (new PIN)</li>';
+                status.innerHTML += '<li>Join from Godot</li>';
+                status.innerHTML += '</ol>';
+                
+            } catch (error) {
+                status.innerHTML += '<p class="error">❌ Error: ' + error.message + '</p>';
+            }
+        };
+    </script>
+</body>
+</html>

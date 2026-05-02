@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlanetCare — Teacher Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+    [v-cloak] {
+      display: none
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif
+    }
+
+    .pulse-dot {
+      animation: pulse 2s infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .4
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #2ecc71;
+      border-radius: 4px
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+      transition: opacity .2s
+    }
+
+    .fade-enter-from,
+    .fade-leave-to {
+      opacity: 0
+    }
+  </style>
+</head>
+
+<body class="bg-gray-950 text-white min-h-screen">
+
+  <div id="app" v-cloak>
+
+    <!-- AUTH -->
+    <div v-if="screen==='auth'" class="min-h-screen flex items-center justify-center p-4">
+      <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+          <div class="text-6xl mb-3">🌍</div>
+          <h1 class="text-4xl font-bold text-green-400">PlanetCare</h1>
+          <p class="text-green-200/50 text-sm mt-1">Teacher Management Panel</p>
+        </div>
+        <div class="bg-green-950/50 border border-green-800/30 rounded-2xl p-8">
+          <div class="flex mb-6 bg-black/30 rounded-xl p-1">
+            <button @click="authTab='login'"
+              :class="authTab==='login'?'bg-green-600 text-white':'text-green-300/50 hover:text-green-300'"
+              class="flex-1 py-2 rounded-lg text-sm font-bold transition-all">Login</button>
+            <button @click="authTab='register'"
+              :class="authTab==='register'?'bg-green-600 text-white':'text-green-300/50 hover:text-green-300'"
+              class="flex-1 py-2 rounded-lg text-sm font-bold transition-all">Register</button>
+          </div>
+          <!-- Login -->
+          <div v-if="authTab==='login'">
+            <div class="mb-4">
+              <label class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">Email</label>
+              <input v-model="loginEmail" type="email" placeholder="teacher@ama.edu.ph"
+                class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-3 text-white placeholder-green-300/20 focus:outline-none focus:border-green-500 text-sm" />
+            </div>
+            <div class="mb-6">
+              <label class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">Password</label>
+              <input v-model="loginPassword" type="password" placeholder="••••••••" @keyup.enter="login"
+                class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-3 text-white placeholder-green-300/20 focus:outline-none focus:border-green-500 text-sm" />
+            </div>
+            <button @click="login" :disabled="loading"
+              class="w-full bg-green-500 hover:bg-green-400 disabled:opacity-50 text-white font-bold py-3 rounded-xl transition-all text-sm">
+              {{loading?'Logging in...':'Login →'}}
+            </button>
+          </div>
+          <!-- Register -->
+          <div v-if="authTab==='register'">
+            <div class="mb-3">
+              <label class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">Full Name</label>
+              <input v-model="regName" type="text" placeholder="e.g. Ms. Santos"
+                class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-3 text-white placeholder-green-300/20 focus:outline-none focus:border-green-500 text-sm" />
+            </div>
+            <div class="mb-3">
+              <label class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">Email</label>
+              <input v-model="regEmail" type="email" placeholder="teacher@ama.edu.ph"
+                class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-3 text-white placeholder-green-300/20 focus:outline-none focus:border-green-500 text-sm" />
+            </div>
+            <div class="mb-3">
+              <label class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">Subject /
+                Grade</label>
+              <input v-model="regSubject" type="text" placeholder="e.g. Science - Grade 5"
+                class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-3 text-white placeholder-green-300/20 focus:outline-none focus:border-green-500 text-sm" />
+            </div>
+            <div class="mb-6">
+              <label class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">Password</label>
+              <input v-model="regPassword" type="password" placeholder="Min. 6 characters"
+                class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-3 text-white placeholder-green-300/20 focus:outline-none focus:border-green-500 text-sm" />
+            </div>
+            <button @click="register" :disabled="loading"
+              class="w-full bg-green-500 hover:bg-green-400 disabled:opacity-50 text-white font-bold py-3 rounded-xl transition-all text-sm">
+              {{loading?'Creating account...':'Create Account →'}}
+            </button>
+          </div>
+          <div v-if="authError"
+            class="mt-4 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-red-400 text-sm text-center">
+            {{authError}}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div v-if="screen==='dashboard'">
+      <!-- Topbar -->
+      <nav
+        class="bg-green-950/80 border-b border-green-800/20 px-6 py-3 flex items-center justify-between sticky top-0 z-50 backdrop-blur">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">🌍</span>
+          <span class="font-bold text-green-400 text-lg">PlanetCare</span>
+          <span
+            class="bg-green-500/20 border border-green-500/30 text-green-300 text-xs px-2 py-0.5 rounded-full font-bold">Teacher
+            Panel</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="text-right hidden sm:block">
+            <div class="text-sm font-bold">{{teacher.name}}</div>
+            <div class="text-xs text-green-300/40">{{teacher.subject}}</div>
+          </div>
+          <button @click="logout"
+            class="bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 text-xs font-bold px-3 py-1.5 rounded-lg transition-all">Logout</button>
+        </div>
+      </nav>
+
+      <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-14 md:w-52 bg-green-950/40 border-r border-green-800/20 flex flex-col py-4 gap-1 shrink-0">
+          <button v-for="tab in tabs" :key="tab.id" @click="activeTab=tab.id"
+            :class="activeTab===tab.id?'bg-green-600/20 border-r-2 border-green-400 text-green-300':'text-green-300/40 hover:text-green-300 hover:bg-green-800/10'"
+            class="flex items-center gap-3 px-4 py-3 transition-all text-left w-full">
+            <span class="text-xl shrink-0">{{tab.icon}}</span>
+            <span class="hidden md:block text-sm font-bold">{{tab.label}}</span>
+          </button>
+        </aside>
+
+        <!-- Content -->
+        <main class="flex-1 p-4 md:p-6 overflow-auto">
+
+          <!-- OVERVIEW -->
+          <div v-if="activeTab==='overview'">
+            <h2 class="text-xl font-bold mb-6">Welcome back, {{teacher.name.split(' ')[0]}}! 👋</h2>
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div v-for="stat in stats" :key="stat.label"
+                class="bg-green-950/50 border border-green-800/20 rounded-2xl p-4">
+                <div class="text-2xl mb-1">{{stat.icon}}</div>
+                <div class="text-2xl font-bold">{{stat.value}}</div>
+                <div class="text-xs text-green-300/40 font-bold uppercase tracking-wider">{{stat.label}}</div>
+              </div>
+            </div>
+            <!-- Create Session -->
+            <div class="bg-green-900/30 border border-green-700/30 rounded-2xl p-6 mb-6">
+              <h3 class="font-bold text-green-300 mb-4">🚀 Start a Session</h3>
+              <div class="flex flex-wrap gap-3 mb-4">
+                <select v-model="quickClass"
+                  class="bg-black/30 border border-green-800/30 rounded-xl px-4 py-2 text-white text-sm flex-1 min-w-40 focus:outline-none focus:border-green-500">
+                  <option value="">Select Class</option>
+                  <option v-for="c in classes" :key="c.id" :value="c.id">{{c.name}} - {{c.section}}</option>
+                </select>
+                <button @click="createSession" :disabled="!quickClass||sessionLoading"
+                  class="bg-green-500 hover:bg-green-400 disabled:opacity-40 text-white font-bold px-5 py-2 rounded-xl text-sm transition-all">
+                  {{sessionLoading?'Creating...':'🎲 Create Session'}}
+                </button>
+              </div>
+            </div>
+            <!-- Active Session -->
+            <div v-if="activeSession" class="bg-green-900/20 border border-green-500/40 rounded-2xl p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-green-300 flex items-center gap-2">
+                  <span class="pulse-dot w-2 h-2 bg-green-400 rounded-full inline-block"></span> Active Session
+                </h3>
+                <button @click="endSession"
+                  class="text-xs text-red-400 border border-red-500/20 px-3 py-1 rounded-lg hover:bg-red-500/10 transition-all">End
+                  Session</button>
+              </div>
+              <div class="text-center mb-5">
+                <div class="text-xs text-green-300/40 uppercase tracking-widest mb-2 font-bold">Session PIN</div>
+                <div class="text-7xl font-bold tracking-widest text-green-400 font-mono">{{activeSession.pin}}</div>
+                <div class="text-sm text-green-300/50 mt-2">Share this PIN with your students</div>
+              </div>
+              <div class="flex gap-3 mb-4">
+                <button @click="startGame" :disabled="activeSession.status==='started'"
+                  class="flex-1 bg-green-500 hover:bg-green-400 disabled:opacity-40 text-white font-bold py-2.5 rounded-xl text-sm transition-all">▶
+                  Start Game</button>
+              </div>
+              <!-- Send Scenario -->
+              <div v-if="events.length > 0" class="mb-4">
+                <div class="text-xs text-green-300/40 font-bold uppercase tracking-wider mb-2">Send Scenario to Students
+                </div>
+                <div class="space-y-2 max-h-48 overflow-y-auto">
+                  <div v-for="(e,i) in events" :key="e.id" @click="sendScenario(i)"
+                    :class="activeScenario===i?'border-green-400 bg-green-900/40':'border-green-800/20 hover:border-green-600/30'"
+                    class="border rounded-xl px-4 py-2.5 cursor-pointer transition-all flex items-center gap-3">
+                    <span
+                      class="text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full font-bold shrink-0">{{categoryEmoji(e.category)}}</span>
+                    <span class="text-sm text-white flex-1 truncate">{{e.question}}</span>
+                    <span v-if="activeScenario===i" class="text-xs text-green-400 font-bold shrink-0">● Live</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Students -->
+              <div class="bg-black/20 rounded-xl p-3">
+                <div class="text-xs text-green-300/40 font-bold uppercase tracking-wider mb-2">Students Joined:
+                  {{sessionStudents.length}}</div>
+                <div v-if="sessionStudents.length===0" class="text-center text-green-300/30 text-sm py-3">Waiting for
+                  students...</div>
+                <div v-for="s in sessionStudents" :key="s.id"
+                  class="flex items-center gap-2 py-1.5 border-b border-green-800/10 last:border-0">
+                  <div
+                    class="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-xs font-bold text-green-950">
+                    {{s.name[0].toUpperCase()}}</div>
+                  <span class="text-sm flex-1">{{s.name}}</span>
+                  <span class="text-xs text-green-400 font-bold">{{s.score||0}} pts</span>
+                  <span class="text-xs" :class="s.answer?'text-green-400':'text-green-300/20'">{{s.answer?'✓
+                    Answered':'Waiting'}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CLASSES -->
+          <div v-if="activeTab==='classes'">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-bold">My Classes</h2>
+              <button @click="showAddClass=true"
+                class="bg-green-500 hover:bg-green-400 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all">+
+                Add Class</button>
+            </div>
+            <!-- Modal -->
+            <div v-if="showAddClass" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+              @click.self="showAddClass=false">
+              <div class="bg-gray-900 border border-green-800/30 rounded-2xl p-6 w-full max-w-sm">
+                <h3 class="font-bold text-green-400 mb-4">Add New Class</h3>
+                <div class="mb-3"><label
+                    class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">Class Name</label>
+                  <input v-model="newClass.name" placeholder="e.g. Grade 5"
+                    class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-green-500" />
+                </div>
+                <div class="mb-3"><label
+                    class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">Section</label>
+                  <input v-model="newClass.section" placeholder="e.g. Matiyaga"
+                    class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-green-500" />
+                </div>
+                <div class="mb-5"><label
+                    class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">School Year</label>
+                  <input v-model="newClass.schoolYear" placeholder="e.g. 2024-2025"
+                    class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-green-500" />
+                </div>
+                <div class="flex gap-3">
+                  <button @click="showAddClass=false"
+                    class="flex-1 border border-green-800/30 text-green-300/50 py-2.5 rounded-xl text-sm font-bold hover:bg-green-800/10 transition-all">Cancel</button>
+                  <button @click="addClass"
+                    class="flex-1 bg-green-500 hover:bg-green-400 text-white py-2.5 rounded-xl text-sm font-bold transition-all">Add</button>
+                </div>
+              </div>
+            </div>
+            <div v-if="classes.length===0" class="text-center py-16 text-green-300/30">
+              <div class="text-5xl mb-3">📚</div>
+              <p class="text-sm">No classes yet.</p>
+            </div>
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div v-for="c in classes" :key="c.id" @click="openClass(c)"
+                class="bg-green-950/40 border border-green-800/20 rounded-2xl p-5 hover:border-green-600/40 cursor-pointer transition-all">
+                <div class="flex items-start justify-between mb-3">
+                  <div>
+                    <div class="font-bold">{{c.name}}</div>
+                    <div class="text-sm text-green-300/40">{{c.section}}</div>
+                  </div>
+                  <button @click.stop="deleteClass(c.id)"
+                    class="text-red-400/30 hover:text-red-400 text-xs transition-all">✕</button>
+                </div>
+                <div class="text-xs text-green-300/30">📅 {{c.schoolYear}} · 👥 {{c.studentCount||0}} students</div>
+              </div>
+            </div>
+            <!-- Class Detail Modal -->
+            <div v-if="selectedClass"
+              class="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 overflow-auto"
+              @click.self="selectedClass=null">
+              <div class="bg-gray-900 border border-green-800/30 rounded-2xl w-full max-w-lg mt-8">
+                <div class="p-5 border-b border-green-800/20 flex items-center justify-between">
+                  <div>
+                    <h3 class="font-bold">{{selectedClass.name}} - {{selectedClass.section}}</h3>
+                    <p class="text-xs text-green-300/40">{{selectedClass.schoolYear}}</p>
+                  </div>
+                  <button @click="selectedClass=null" class="text-green-300/40 hover:text-green-300 text-xl">✕</button>
+                </div>
+                <div class="p-5">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-sm font-bold text-green-300">Students ({{classStudents.length}})</span>
+                    <div class="flex gap-2">
+                      <input v-model="newStudentName" placeholder="Student name" @keyup.enter="addStudent"
+                        class="bg-black/40 border border-green-800/30 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-green-500 w-36" />
+                      <button @click="addStudent"
+                        class="bg-green-500 hover:bg-green-400 text-white text-xs font-bold px-3 py-1.5 rounded-lg">Add</button>
+                    </div>
+                  </div>
+                  <div class="space-y-2 max-h-72 overflow-y-auto">
+                    <div v-if="classStudents.length===0" class="text-center py-8 text-green-300/30 text-sm">No students
+                      yet</div>
+                    <div v-for="s in classStudents" :key="s.id"
+                      class="flex items-center gap-3 bg-black/20 rounded-xl px-4 py-2.5">
+                      <div
+                        class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-xs font-bold text-green-950">
+                        {{s.name[0].toUpperCase()}}</div>
+                      <span class="flex-1 text-sm">{{s.name}}</span>
+                      <span class="text-xs text-green-400 font-bold">{{s.totalScore||0}} pts</span>
+                      <button @click="deleteStudent(s.id)" class="text-red-400/30 hover:text-red-400 text-xs">✕</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EVENTS -->
+          <div v-if="activeTab==='events'">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-bold">Game Events</h2>
+              <div class="flex gap-2">
+                <button @click="openTemplateLibrary"
+                  class="bg-blue-500 hover:bg-blue-400 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all">📚
+                  Templates</button>
+                <button @click="showAddEvent=true"
+                  class="bg-green-500 hover:bg-green-400 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all">+
+                  Add Event</button>
+              </div>
+            </div>
+            <!-- Add Event Modal -->
+            <div v-if="showAddEvent" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+              @click.self="showAddEvent=false">
+              <div
+                class="bg-gray-900 border border-green-800/30 rounded-2xl p-6 w-full max-w-lg max-h-screen overflow-y-auto">
+                <h3 class="font-bold text-green-400 mb-4">Add New Event</h3>
+                <div class="mb-3"><label
+                    class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">Scenario /
+                    Question</label>
+                  <textarea v-model="newEvent.question"
+                    placeholder="e.g. You see trash on the street. What will you do?"
+                    class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-green-500 h-20 resize-none"></textarea>
+                </div>
+                <div class="mb-3"><label
+                    class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">Category</label>
+                  <select v-model="newEvent.category"
+                    class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-green-500">
+                    <option value="waste">🗑️ Waste Management</option>
+                    <option value="water">💧 Water Conservation</option>
+                    <option value="energy">⚡ Energy Saving</option>
+                    <option value="climate">🌡️ Climate Change</option>
+                    <option value="forest">🌲 Forest Protection</option>
+                  </select>
+                </div>
+                <div class="mb-4"><label
+                    class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-2 block">4 Choices</label>
+                  <div v-for="(choice,i) in newEvent.choices" :key="i" class="flex gap-2 mb-2 items-center">
+                    <span class="text-xs text-green-300/40 w-5 font-bold shrink-0">{{['A','B','C','D'][i]}}</span>
+                    <input v-model="newEvent.choices[i].text" :placeholder="'Choice '+(i+1)"
+                      class="flex-1 bg-black/40 border border-green-800/30 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-green-500" />
+                    <select v-model="newEvent.choices[i].effect"
+                      class="bg-black/40 border border-green-800/30 rounded-lg px-2 py-2 text-white text-xs focus:outline-none shrink-0">
+                      <option value="good">+Good</option>
+                      <option value="bad">-Bad</option>
+                      <option value="neutral">Neutral</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="mb-5 flex items-center gap-3">
+                  <input type="checkbox" v-model="newEvent.hasMiniGame" class="accent-green-500 w-4 h-4" />
+                  <label class="text-sm text-green-300/60">Has Mini-game?</label>
+                </div>
+                <div class="flex gap-3">
+                  <button @click="showAddEvent=false"
+                    class="flex-1 border border-green-800/30 text-green-300/50 py-2.5 rounded-xl text-sm font-bold hover:bg-green-800/10 transition-all">Cancel</button>
+                  <button @click="addEvent"
+                    class="flex-1 bg-green-500 hover:bg-green-400 text-white py-2.5 rounded-xl text-sm font-bold transition-all">Add
+                    Event</button>
+                </div>
+              </div>
+            </div>
+            <div v-if="events.length===0" class="text-center py-16 text-green-300/30">
+              <div class="text-5xl mb-3">📋</div>
+              <p class="text-sm">No events yet.</p>
+            </div>
+            <div class="space-y-3">
+              <div v-for="e in events" :key="e.id"
+                class="bg-green-950/40 border border-green-800/20 rounded-2xl p-5 hover:border-green-600/30 transition-all">
+                <div class="flex items-start justify-between mb-2">
+                  <div class="flex gap-2 flex-wrap">
+                    <span
+                      class="text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full font-bold">{{categoryEmoji(e.category)}}
+                      {{e.category}}</span>
+                    <span v-if="e.hasMiniGame"
+                      class="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-0.5 rounded-full font-bold">🎮
+                      Mini-game</span>
+                  </div>
+                  <div class="flex gap-2">
+                    <button @click="addEventToTemplate(e)" title="Add to Template"
+                      class="text-blue-400/50 hover:text-blue-400 text-xs transition-all">📦</button>
+                    <button @click="deleteEvent(e.id)"
+                      class="text-red-400/30 hover:text-red-400 text-xs transition-all">✕</button>
+                  </div>
+                </div>
+                <p class="text-sm mb-3 font-medium">{{e.question}}</p>
+                <div class="grid grid-cols-2 gap-2">
+                  <div v-for="(c,i) in e.choices" :key="i"
+                    :class="c.effect==='good'?'border-green-500/30 bg-green-900/20':c.effect==='bad'?'border-red-500/30 bg-red-900/10':'border-gray-700/30'"
+                    class="border rounded-lg px-3 py-2 text-xs">
+                    <span class="font-bold text-green-300/50">{{['A','B','C','D'][i]}}.</span>
+                    <span class="ml-1">{{c.text||'(empty)'}}</span>
+                    <span :class="c.effect==='good'?'text-green-400':c.effect==='bad'?'text-red-400':'text-gray-400'"
+                      class="ml-1 font-bold">({{c.effect}})</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- TEMPLATE LIBRARY -->
+            <div v-if="showTemplateLibrary"
+              class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-auto">
+              <div class="bg-gray-900 border border-green-800/30 rounded-2xl w-full max-w-2xl">
+                <div class="p-5 border-b border-green-800/20 flex items-center justify-between">
+                  <h3 class="font-bold text-green-400">📚 Question Templates - Climate Change</h3>
+                  <button @click="showTemplateLibrary=false"
+                    class="text-green-300/40 hover:text-green-300 text-xl">✕</button>
+                </div>
+                <div class="p-5 max-h-96 overflow-y-auto space-y-2">
+                  <div v-if="defaultQuestions.length===0" class="text-center text-green-300/30">Loading templates...
+                  </div>
+                  <div v-for="template in defaultQuestions" :key="template.id"
+                    class="flex items-start gap-3 border border-green-800/20 rounded-xl p-3 hover:border-green-600/30 transition-all">
+                    <div class="flex-1">
+                      <span
+                        class="text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full font-bold">{{categoryEmoji(template.category)}}</span>
+                      <p class="text-sm font-bold mt-1 line-clamp-2">{{template.question}}</p>
+                      <p class="text-xs text-green-300/40 mt-1">{{template.hasMiniGame?'🎮 With mini-game':'📋
+                        Decision-based'}}</p>
+                    </div>
+                    <button @click="addTemplateToEvents(template)"
+                      class="bg-green-500 hover:bg-green-400 text-white text-xs font-bold px-3 py-2 rounded-lg shrink-0 whitespace-nowrap">Use</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TEMPLATES -->
+          <div v-if="activeTab==='templates'">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-bold">Question Templates</h2>
+              <button @click="showAddTemplate=true"
+                class="bg-green-500 hover:bg-green-400 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all">+
+                Create Template</button>
+            </div>
+            <!-- Add Template Modal -->
+            <div v-if="showAddTemplate"
+              class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-auto"
+              @click.self="showAddTemplate=false">
+              <div
+                class="bg-gray-900 border border-green-800/30 rounded-2xl p-6 w-full max-w-lg max-h-screen overflow-y-auto">
+                <h3 class="font-bold text-green-400 mb-4">Create Template</h3>
+                <div class="mb-3">
+                  <label class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">Template
+                    Name</label>
+                  <input v-model="newTemplate.name" placeholder="e.g. Waste Management 101"
+                    class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-green-500" />
+                </div>
+                <div class="mb-3">
+                  <label
+                    class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">Description</label>
+                  <textarea v-model="newTemplate.description" placeholder="What is this template about?"
+                    class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-green-500 h-16 resize-none"></textarea>
+                </div>
+                <div class="mb-4">
+                  <div class="flex items-center gap-3">
+                    <input type="checkbox" v-model="newTemplate.isPublic" class="accent-green-500 w-4 h-4" />
+                    <label class="text-sm text-green-300/60">Make this template public</label>
+                  </div>
+                </div>
+                <div v-if="newTemplate.isPublic" class="mb-4">
+                  <label class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-1 block">Access Code
+                    (optional)</label>
+                  <input v-model="newTemplate.accessCode" placeholder="Leave empty for unrestricted access"
+                    class="w-full bg-black/40 border border-green-800/30 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-green-500" />
+                </div>
+                <div class="mb-4">
+                  <div class="text-sm font-bold text-green-300 mb-2">Events in this template:
+                    {{newTemplate.events.length}}</div>
+                  <div class="bg-black/20 rounded-xl p-3 max-h-40 overflow-y-auto space-y-2">
+                    <div v-if="newTemplate.events.length===0" class="text-center text-green-300/30 text-xs py-4">No
+                      events added yet. Add events from the Events tab.</div>
+                    <div v-for="(e,i) in newTemplate.events" :key="i"
+                      class="flex items-center gap-2 bg-green-900/20 rounded-lg px-3 py-2 text-xs">
+                      <span class="flex-1 truncate">{{e.question}}</span>
+                      <button @click="removeEventFromTemplate(i)"
+                        class="text-red-400/50 hover:text-red-400 text-sm">✕</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex gap-3">
+                  <button @click="showAddTemplate=false"
+                    class="flex-1 border border-green-800/30 text-green-300/50 py-2.5 rounded-xl text-sm font-bold hover:bg-green-800/10 transition-all">Cancel</button>
+                  <button @click="addTemplate"
+                    class="flex-1 bg-green-500 hover:bg-green-400 text-white py-2.5 rounded-xl text-sm font-bold transition-all">Create</button>
+                </div>
+              </div>
+            </div>
+            <div v-if="templates.length===0" class="text-center py-16 text-green-300/30">
+              <div class="text-5xl mb-3">📦</div>
+              <p class="text-sm">No templates yet. Create your first one!</p>
+            </div>
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div v-for="t in templates" :key="t.id"
+                class="bg-green-950/40 border border-green-800/20 rounded-2xl p-5 hover:border-green-600/40 cursor-pointer transition-all">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="flex-1">
+                    <div class="font-bold">{{t.name}}</div>
+                    <div class="text-xs text-green-300/40 mt-1">{{t.description}}</div>
+                  </div>
+                  <button @click="deleteTemplate(t.id)"
+                    class="text-red-400/30 hover:text-red-400 text-xs transition-all">✕</button>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-green-300/30">
+                  <span>{{t.eventCount||0}} events</span>
+                  <span v-if="t.isPublic" class="bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full font-bold">🌐
+                    Public</span>
+                  <span v-else class="bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full font-bold">🔒
+                    Private</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- HISTORY -->
+          <div v-if="activeTab==='history'">
+            <h2 class="text-xl font-bold mb-6">Session History & Analytics</h2>
+            <div v-if="sessions.length===0" class="text-center py-16 text-green-300/30">
+              <div class="text-5xl mb-3">🕐</div>
+              <p class="text-sm">No sessions yet. Create one to get started!</p>
+            </div>
+            <div class="space-y-4">
+              <div v-for="s in sessions" :key="s.id"
+                class="bg-green-950/40 border border-green-800/20 rounded-2xl p-6 hover:border-green-600/30 transition-all">
+                <div class="flex items-start justify-between mb-4">
+                  <div>
+                    <div class="font-bold text-lg flex items-center gap-2">
+                      <span class="text-green-400 font-mono">{{s.pin}}</span>
+                      <span :class="s.status==='ended'?'bg-gray-500/20 text-gray-400':'bg-green-500/20 text-green-400'"
+                        class="text-xs px-2 py-0.5 rounded-full font-bold">{{s.status}}</span>
+                    </div>
+                    <div class="text-xs text-green-300/40 mt-1">{{formatDate(s.createdAt)}}</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-3xl font-bold text-green-400">{{s.studentCount||0}}</div>
+                    <div class="text-xs text-green-300/40">students</div>
+                  </div>
+                </div>
+
+                <!-- Top performers -->
+                <div v-if="s.topStudents&&s.topStudents.length>0" class="mb-4">
+                  <div class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-2">Top Performers</div>
+                  <div class="flex gap-2">
+                    <div v-for="(st,i) in s.topStudents.slice(0,3)" :key="i"
+                      class="flex-1 bg-black/20 rounded-lg px-3 py-2.5 text-center">
+                      <span class="text-lg">{{i===0?'🥇':i===1?'🥈':'🥉'}}</span>
+                      <div class="text-xs font-bold mt-1 truncate">{{st.name}}</div>
+                      <div class="text-green-400 font-bold text-sm">{{st.score}} pts</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Session info -->
+                <div class="grid grid-cols-3 gap-3 pt-4 border-t border-green-800/10">
+                  <div class="text-center">
+                    <div class="text-xs text-green-300/50">Duration</div>
+                    <div class="font-bold text-green-400">~5 min</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-xs text-green-300/50">Completion</div>
+                    <div class="font-bold text-green-400">{{s.studentCount > 0 ? '100%' : '0%'}}</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-xs text-green-300/50">Participation</div>
+                    <div class="font-bold text-green-400">{{s.studentCount || 0}} 👥</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div v-if="activeTab==='reports'">
+      <h2 class="text-xl font-bold mb-6">Student Reports</h2>
+      <select v-model="reportClass" @change="loadReport"
+        class="bg-black/40 border border-green-800/30 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-green-500 mb-4 w-full max-w-xs">
+        <option value="">Select a class</option>
+        <option v-for="c in classes" :key="c.id" :value="c.id">{{c.name}} - {{c.section}}</option>
+      </select>
+      <div v-if="reportStudents.length>0"
+        class="bg-green-950/40 border border-green-800/20 rounded-2xl overflow-hidden">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-green-800/20">
+              <th class="text-left px-5 py-3 text-xs text-green-300/40 font-bold uppercase tracking-wider">Student</th>
+              <th class="text-center px-4 py-3 text-xs text-green-300/40 font-bold uppercase tracking-wider">Total</th>
+              <th class="text-center px-4 py-3 text-xs text-green-300/40 font-bold uppercase tracking-wider">Sessions
+              </th>
+              <th class="text-center px-4 py-3 text-xs text-green-300/40 font-bold uppercase tracking-wider">Avg</th>
+              <th class="text-center px-4 py-3 text-xs text-green-300/40 font-bold uppercase tracking-wider">Performance
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="s in reportStudents" :key="s.id"
+              class="border-b border-green-800/10 hover:bg-green-800/5 transition-all">
+              <td class="px-5 py-3">
+                <div class="flex items-center gap-2">
+                  <div
+                    class="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-xs font-bold text-green-950">
+                    {{s.name[0].toUpperCase()}}</div>
+                  <span class="font-medium">{{s.name}}</span>
+                </div>
+              </td>
+              <td class="text-center px-4 py-3 font-bold text-green-400">{{s.totalScore||0}}</td>
+              <td class="text-center px-4 py-3 text-green-300/50">{{s.sessionCount||0}}</td>
+              <td class="text-center px-4 py-3">{{s.avgScore||0}}</td>
+              <td class="text-center px-4 py-3"><span :class="perfColor(s.avgScore)"
+                  class="text-xs font-bold px-2 py-1 rounded-full">{{perfLabel(s.avgScore)}}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-else-if="reportClass" class="text-center py-16 text-green-300/30">
+        <div class="text-5xl mb-3">📊</div>
+        <p class="text-sm">No data yet for this class.</p>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div v-if="activeTab==='settings'">
+      <h2 class="text-xl font-bold mb-6">Settings & Account</h2>
+      <div class="grid gap-6 max-w-2xl">
+        <!-- Profile Section -->
+        <div class="bg-green-950/40 border border-green-800/20 rounded-2xl p-6">
+          <h3 class="font-bold text-green-300 mb-4">👤 Profile Information</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-2 block">Full Name</label>
+              <div class="bg-black/30 border border-green-800/30 rounded-xl px-4 py-2.5 text-white text-sm">
+                {{teacher.name}}</div>
+            </div>
+            <div>
+              <label class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-2 block">Email
+                Address</label>
+              <div class="bg-black/30 border border-green-800/30 rounded-xl px-4 py-2.5 text-white text-sm">
+                {{teacher.email}}</div>
+            </div>
+            <div>
+              <label class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-2 block">Subject / Grade
+                Level</label>
+              <div class="bg-black/30 border border-green-800/30 rounded-xl px-4 py-2.5 text-white text-sm">
+                {{teacher.subject||'Not specified'}}</div>
+            </div>
+            <div>
+              <label class="text-xs text-green-300/50 font-bold uppercase tracking-wider mb-2 block">School</label>
+              <div class="bg-black/30 border border-green-800/30 rounded-xl px-4 py-2.5 text-white text-sm">
+                {{teacher.school||'Not specified'}}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Statistics -->
+        <div class="bg-green-950/40 border border-green-800/20 rounded-2xl p-6">
+          <h3 class="font-bold text-green-300 mb-4">📈 Dashboard Statistics</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="text-sm text-green-300/50">Total Classes</div>
+              <div class="text-3xl font-bold text-green-400">{{classes.length}}</div>
+            </div>
+            <div>
+              <div class="text-sm text-green-300/50">Total Events</div>
+              <div class="text-3xl font-bold text-green-400">{{events.length}}</div>
+            </div>
+            <div>
+              <div class="text-sm text-green-300/50">Sessions Held</div>
+              <div class="text-3xl font-bold text-green-400">{{sessions.length}}</div>
+            </div>
+            <div>
+              <div class="text-sm text-green-300/50">Templates Created</div>
+              <div class="text-3xl font-bold text-green-400">{{templates.length}}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- About -->
+        <div class="bg-green-950/40 border border-green-800/20 rounded-2xl p-6">
+          <h3 class="font-bold text-green-300 mb-4">ℹ️ About PlanetCare</h3>
+          <div class="space-y-3 text-sm text-green-300/70">
+            <p>🌍 <strong>PlanetCare</strong> is an interactive educational platform that brings climate-change learning
+              to life through engaging mini-games and decision-making scenarios.</p>
+            <p>👨‍🏫 Teachers control sessions in real-time, send engaging questions, and track student performance on
+              live leaderboards.</p>
+            <p>🎮 Students join via unique PIN codes and compete in low-poly portrait-style gameplay with immediate
+              feedback.</p>
+            <div class="pt-3 border-t border-green-800/20">
+              <div class="text-xs text-green-300/50">Version 1.0 • Built with Vue.js + Firebase</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="bg-red-950/20 border border-red-800/30 rounded-2xl p-6">
+          <h3 class="font-bold text-red-400 mb-4">⚠️ Danger Zone</h3>
+          <div class="space-y-3">
+            <p class="text-sm text-red-300/70">Logout from your account. You will be able to log back in anytime.</p>
+            <button @click="logout"
+              class="bg-red-500 hover:bg-red-400 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all">🚪
+              Logout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </main>
+  </div>
+  </div>
+  </div>
+
+  <!-- Firebase AFTER Vue -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, where, getDocs, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getDatabase, ref as dbRef, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAbNa5ID6uB-yWPE1HXPL6b2fS7Bkxa1qo",
+      authDomain: "planetcare-6460f.firebaseapp.com",
+      databaseURL: "https://planetcare-6460f-default-rtdb.firebaseio.com",
+      projectId: "planetcare-6460f",
+      storageBucket: "planetcare-6460f.firebasestorage.app",
+      messagingSenderId: "744773599560",
+      appId: "1:744773599560:web:2d5d2ae016a2996ead337d"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const auth = getAuth(firebaseApp);
+    const db = getFirestore(firebaseApp);
+    const rtdb = getDatabase(firebaseApp);
+
+    const { createApp, ref, computed } = Vue;
+
+    createApp({
+      setup() {
+        const screen = ref('auth');
+        const authTab = ref('login');
+        const loading = ref(false);
+        const authError = ref('');
+        const teacher = ref({ name: '', email: '', subject: '' });
+
+        const loginEmail = ref('');
+        const loginPassword = ref('');
+        const regName = ref('');
+        const regEmail = ref('');
+        const regPassword = ref('');
+        const regSubject = ref('');
+
+        const activeTab = ref('overview');
+        const tabs = [
+          { id: 'overview', icon: '🏠', label: 'Overview' },
+          { id: 'classes', icon: '📚', label: 'Classes' },
+          { id: 'events', icon: '📋', label: 'Events' },
+          { id: 'templates', icon: '📦', label: 'Templates' },
+          { id: 'history', icon: '🕐', label: 'History' },
+          { id: 'reports', icon: '📊', label: 'Reports' },
+          { id: 'settings', icon: '⚙️', label: 'Settings' },
+        ];
+
+        const classes = ref([]);
+        const showAddClass = ref(false);
+        const newClass = ref({ name: '', section: '', schoolYear: '2024-2025' });
+        const selectedClass = ref(null);
+        const classStudents = ref([]);
+        const newStudentName = ref('');
+
+        const events = ref([]);
+        const showAddEvent = ref(false);
+        const showTemplateLibrary = ref(false);
+        const defaultQuestions = ref([]);
+        const newEvent = ref({
+          question: '', category: 'waste', hasMiniGame: false, choices: [
+            { text: '', effect: 'good' }, { text: '', effect: 'bad' },
+            { text: '', effect: 'neutral' }, { text: '', effect: 'bad' }
+          ]
+        });
+
+        const quickClass = ref('');
+        const activeSession = ref(null);
+        const activeScenario = ref(-1);
+        const sessionStudents = ref([]);
+        const sessionLoading = ref(false);
+        const sessions = ref([]);
+
+        const reportClass = ref('');
+        const reportStudents = ref([]);
+
+        const templates = ref([]);
+        const showAddTemplate = ref(false);
+        const newTemplate = ref({ name: '', description: '', isPublic: false, accessCode: '', events: [] });
+
+        const stats = computed(() => [
+          { icon: '📚', value: classes.value.length, label: 'Classes' },
+          { icon: '👥', value: classes.value.reduce((a, c) => a + (c.studentCount || 0), 0), label: 'Students' },
+          { icon: '🎮', value: sessions.value.length, label: 'Sessions' },
+          { icon: '📋', value: events.value.length, label: 'Events' },
+        ]);
+
+        // 🔥 AUTH STATE - Load everything after login
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            const snap = await getDoc(doc(db, 'teachers', user.uid));
+            if (snap.exists()) {
+              teacher.value = snap.data();
+              screen.value = 'dashboard';
+              await loadAll();
+              // 🔥 Load templates immediately after login
+              await refreshTemplateLibrary();
+            }
+          } else {
+            screen.value = 'auth';
+          }
+        });
+
+        async function login() {
+          if (!loginEmail.value || !loginPassword.value) { authError.value = 'Please fill in all fields.'; return; }
+          loading.value = true; authError.value = '';
+          try {
+            await signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value);
+          } catch (e) {
+            authError.value = 'Invalid email or password.';
+          } finally { loading.value = false; }
+        }
+
+        async function register() {
+          if (!regName.value || !regEmail.value || !regPassword.value) { authError.value = 'Please fill in all fields.'; return; }
+          loading.value = true; authError.value = '';
+          try {
+            const cred = await createUserWithEmailAndPassword(auth, regEmail.value, regPassword.value);
+            await setDoc(doc(db, 'teachers', cred.user.uid), {
+              name: regName.value, email: regEmail.value, subject: regSubject.value,
+              school: 'AMA Computer College East Rizal', createdAt: serverTimestamp()
+            });
+          } catch (e) {
+            authError.value = e.code === 'auth/email-already-in-use' ? 'Email already registered.' : 'Registration failed.';
+          } finally { loading.value = false; }
+        }
+
+        async function logout() {
+          await signOut(auth);
+        }
+
+        async function loadAll() {
+          await Promise.all([loadClasses(), loadEvents(), loadTemplates(), loadSessions()]);
+        }
+
+        async function loadClasses() {
+          const user = auth.currentUser; if (!user) return;
+          const snap = await getDocs(query(collection(db, 'classes'), where('teacherId', '==', user.uid)));
+          classes.value = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        }
+
+        async function addClass() {
+          const user = auth.currentUser;
+          if (!newClass.value.name || !newClass.value.section) return;
+          await addDoc(collection(db, 'classes'), { ...newClass.value, teacherId: user.uid, studentCount: 0, createdAt: serverTimestamp() });
+          newClass.value = { name: '', section: '', schoolYear: '2024-2025' };
+          showAddClass.value = false;
+          await loadClasses();
+        }
+
+        async function deleteClass(id) {
+          if (!confirm('Delete this class?')) return;
+          await deleteDoc(doc(db, 'classes', id));
+          await loadClasses();
+        }
+
+        async function openClass(c) {
+          selectedClass.value = c;
+          const snap = await getDocs(query(collection(db, 'students'), where('classId', '==', c.id)));
+          classStudents.value = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        }
+
+        async function addStudent() {
+          if (!newStudentName.value || !selectedClass.value) return;
+          await addDoc(collection(db, 'students'), {
+            name: newStudentName.value, classId: selectedClass.value.id,
+            teacherId: auth.currentUser.uid, totalScore: 0, sessionCount: 0, createdAt: serverTimestamp()
+          });
+          newStudentName.value = '';
+          await openClass(selectedClass.value);
+          const actualCount = classStudents.value.length;
+          await updateDoc(doc(db, 'classes', selectedClass.value.id), { studentCount: actualCount });
+          await loadClasses();
+        }
+
+        async function deleteStudent(id) {
+          await deleteDoc(doc(db, 'students', id));
+          await openClass(selectedClass.value);
+          const actualCount = classStudents.value.length;
+          await updateDoc(doc(db, 'classes', selectedClass.value.id), { studentCount: actualCount });
+          await loadClasses();
+        }
+
+        async function loadEvents() {
+          const user = auth.currentUser; if (!user) return;
+          const snap = await getDocs(query(collection(db, 'events'), where('teacherId', '==', user.uid)));
+          events.value = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        }
+
+        async function loadTemplates() {
+          const user = auth.currentUser; if (!user) return;
+          const snap = await getDocs(query(collection(db, 'templates'), where('teacherId', '==', user.uid)));
+          templates.value = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        }
+
+        async function addEvent() {
+          const user = auth.currentUser;
+          if (!newEvent.value.question) return;
+          await addDoc(collection(db, 'events'), { ...newEvent.value, teacherId: user.uid, createdAt: serverTimestamp() });
+          newEvent.value = {
+            question: '', category: 'waste', hasMiniGame: false, choices: [
+              { text: '', effect: 'good' }, { text: '', effect: 'bad' },
+              { text: '', effect: 'neutral' }, { text: '', effect: 'bad' }
+            ]
+          };
+          showAddEvent.value = false;
+          await loadEvents();
+          await refreshTemplateLibrary(); // 🔥 Refresh templates after adding event
+        }
+
+        async function deleteEvent(id) {
+          if (!confirm('Delete this event?')) return;
+          await deleteDoc(doc(db, 'events', id));
+          await loadEvents();
+          await refreshTemplateLibrary(); // 🔥 Refresh templates after deleting
+        }
+
+        // 🔥 NEW: Refresh template library
+        async function refreshTemplateLibrary() {
+          const user = auth.currentUser;
+          if (!user) return;
+
+          try {
+            const snap = await getDocs(query(collection(db, 'events'), where('teacherId', '==', user.uid)));
+            const loadedEvents = [];
+            snap.forEach(doc => {
+              loadedEvents.push({ id: doc.id, ...doc.data() });
+            });
+            defaultQuestions.value = loadedEvents;
+            console.log('✅ Template library loaded:', loadedEvents.length, 'events');
+          } catch (e) {
+            console.error('Failed to load templates:', e);
+            // Fallback - try local JSON
+            try {
+              const response = await fetch('./default-questions.json');
+              const data = await response.json();
+              defaultQuestions.value = data.defaultEvents || [];
+            } catch (err) {
+              defaultQuestions.value = [];
+            }
+          }
+        }
+
+        // 🔥 NEW: Open template library with refresh
+        async function openTemplateLibrary() {
+          showTemplateLibrary.value = true;
+          await refreshTemplateLibrary();
+        }
+
+        function addTemplateToEvents(template) {
+          newEvent.value = {
+            question: template.question,
+            category: template.category,
+            hasMiniGame: template.hasMiniGame || false,
+            choices: template.choices.map(c => ({ text: c.text, effect: c.effect }))
+          };
+          showTemplateLibrary.value = false;
+          showAddEvent.value = true;
+        }
+
+        async function addTemplate() {
+          const user = auth.currentUser;
+          if (!newTemplate.value.name || newTemplate.value.events.length === 0) {
+            alert('Template name and at least one event required.');
+            return;
+          }
+          await addDoc(collection(db, 'templates'), {
+            ...newTemplate.value,
+            teacherId: user.uid,
+            createdAt: serverTimestamp(),
+            eventCount: newTemplate.value.events.length
+          });
+          newTemplate.value = { name: '', description: '', isPublic: false, accessCode: '', events: [] };
+          showAddTemplate.value = false;
+          await loadTemplates();
+        }
+
+        async function deleteTemplate(id) {
+          if (!confirm('Delete this template?')) return;
+          await deleteDoc(doc(db, 'templates', id));
+          await loadTemplates();
+        }
+
+        function addEventToTemplate(event) {
+          newTemplate.value.events.push({ ...event });
+        }
+
+        function removeEventFromTemplate(index) {
+          newTemplate.value.events.splice(index, 1);
+        }
+
+        async function loadSessions() {
+          const user = auth.currentUser; if (!user) return;
+          const snap = await getDocs(query(collection(db, 'sessions'), where('teacherId', '==', user.uid)));
+          sessions.value = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        }
+
+        async function createSession() {
+          if (!quickClass.value) return;
+          sessionLoading.value = true;
+          const pin = Math.floor(100000 + Math.random() * 900000).toString();
+          const user = auth.currentUser;
+
+          const sessionRef = doc(db, 'sessions', pin);
+          await setDoc(sessionRef, {
+            pin,
+            teacherId: user.uid,
+            classId: quickClass.value,
+            status: 'waiting',
+            current_scenario: 0,
+            studentCount: 0,
+            createdAt: serverTimestamp(),
+            templateId: 'default'
+          });
+
+          await set(dbRef(rtdb, `sessions/${pin}`), {
+            status: 'waiting',
+            current_scenario: 0,
+            pin,
+            sessionId: pin,
+            templateId: 'default'
+          });
+
+          activeSession.value = { id: pin, pin, status: 'waiting' };
+          sessionLoading.value = false;
+          watchSession(pin);
+        }
+
+        function watchSession(pin) {
+          onValue(dbRef(rtdb, `sessions/${pin}/students`), (snap) => {
+            const data = snap.val();
+            sessionStudents.value = data ? Object.entries(data).map(([id, v]) => ({ id, ...v })) : [];
+          });
+        }
+
+        async function startGame() {
+          if (!activeSession.value) return;
+          const pin = activeSession.value.pin;
+          await set(dbRef(rtdb, `sessions/${pin}/status`), 'started');
+          await updateDoc(doc(db, 'sessions', pin), { status: 'started' });
+          activeSession.value.status = 'started';
+        }
+
+        async function sendScenario(index) {
+          if (!activeSession.value) return;
+          const pin = activeSession.value.pin;
+          activeScenario.value = index;
+          await set(dbRef(rtdb, `sessions/${pin}/current_scenario`), index);
+          await updateDoc(doc(db, 'sessions', pin), { current_scenario: index });
+        }
+
+        async function endSession() {
+          if (!activeSession.value) return;
+          const pin = activeSession.value.pin;
+
+          await set(dbRef(rtdb, `sessions/${pin}/status`), 'ended');
+          await updateDoc(doc(db, 'sessions', pin), {
+            status: 'ended',
+            studentCount: sessionStudents.value.length,
+            topStudents: [...sessionStudents.value].sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 3)
+          });
+
+          activeSession.value = null;
+          sessionStudents.value = [];
+          activeScenario.value = -1;
+          await loadSessions();
+        }
+
+        async function loadReport() {
+          if (!reportClass.value) return;
+          const snap = await getDocs(query(collection(db, 'students'), where('classId', '==', reportClass.value)));
+          reportStudents.value = snap.docs.map(d => {
+            const data = d.data();
+            return { id: d.id, ...data, avgScore: data.sessionCount > 0 ? Math.round(data.totalScore / data.sessionCount) : 0 };
+          });
+        }
+
+        function categoryEmoji(cat) {
+          return { waste: '🗑️', water: '💧', energy: '⚡', climate: '🌡️', forest: '🌲' }[cat] || '📋';
+        }
+
+        function formatDate(ts) {
+          if (!ts) return 'N/A';
+          return new Date(ts.seconds * 1000).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function perfLabel(score) {
+          if (score >= 80) return '🌟 Excellent';
+          if (score >= 60) return '👍 Good';
+          if (score >= 40) return '📈 Average';
+          return '⚠️ Needs Help';
+        }
+
+        function perfColor(score) {
+          if (score >= 80) return 'bg-green-500/20 text-green-400';
+          if (score >= 60) return 'bg-blue-500/20 text-blue-400';
+          if (score >= 40) return 'bg-yellow-500/20 text-yellow-400';
+          return 'bg-red-500/20 text-red-400';
+        }
+
+        return {
+          screen, authTab, loading, authError, teacher,
+          loginEmail, loginPassword, regName, regEmail, regPassword, regSubject,
+          login, register, logout,
+          activeTab, tabs, stats,
+          classes, showAddClass, newClass, selectedClass, classStudents, newStudentName,
+          addClass, deleteClass, openClass, addStudent, deleteStudent,
+          events, showAddEvent, showTemplateLibrary, defaultQuestions, newEvent, addEvent, deleteEvent, addTemplateToEvents,
+          templates, showAddTemplate, newTemplate, addTemplate, deleteTemplate, addEventToTemplate, removeEventFromTemplate,
+          quickClass, activeSession, activeScenario, sessionStudents, sessionLoading, sessions,
+          createSession, startGame, sendScenario, endSession,
+          reportClass, reportStudents, loadReport,
+          categoryEmoji, formatDate, perfLabel, perfColor,
+          openTemplateLibrary, refreshTemplateLibrary
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+
+</html>

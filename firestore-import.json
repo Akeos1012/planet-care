@@ -1,0 +1,198 @@
+{
+  "events": {
+    "climate1": {
+      "question": "You finish drinking water from a plastic bottle. What do you do?",
+      "category": "waste",
+      "hasMiniGame": false,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Throw it in the recycling bin", "effect": "good"},
+        {"text": "Throw it in the trash", "effect": "bad"},
+        {"text": "Litter it on the street", "effect": "bad"},
+        {"text": "Reuse it as a water bottle", "effect": "good"}
+      ]
+    },
+    "climate2": {
+      "question": "It's a hot day. How do you cool down your room?",
+      "category": "energy",
+      "hasMiniGame": false,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Turn on the AC at maximum", "effect": "bad"},
+        {"text": "Open windows and use a fan", "effect": "good"},
+        {"text": "Close all blinds and stay in shade", "effect": "neutral"},
+        {"text": "Turn on AC but keep it at 25°C", "effect": "good"}
+      ]
+    },
+    "climate3": {
+      "question": "How long should you shower to conserve water?",
+      "category": "water",
+      "hasMiniGame": false,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Less than 5 minutes", "effect": "good"},
+        {"text": "10-15 minutes", "effect": "neutral"},
+        {"text": "20+ minutes with music", "effect": "bad"},
+        {"text": "2 minutes (speed run!)", "effect": "good"}
+      ]
+    },
+    "climate4": {
+      "question": "You need to go to school. What's your best choice?",
+      "category": "climate",
+      "hasMiniGame": false,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Walk or bike", "effect": "good"},
+        {"text": "Take public transport (bus/train)", "effect": "good"},
+        {"text": "Ask parents for a ride", "effect": "neutral"},
+        {"text": "Drive a gas-guzzler SUV alone", "effect": "bad"}
+      ]
+    },
+    "climate5": {
+      "question": "You discover a company cutting down a forest. What do you do?",
+      "category": "forest",
+      "hasMiniGame": false,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Report to environmental authorities", "effect": "good"},
+        {"text": "Organize a protest with friends", "effect": "good"},
+        {"text": "Ignore it, it's not your problem", "effect": "bad"},
+        {"text": "Write a petition online", "effect": "good"}
+      ]
+    },
+    "climate6": {
+      "question": "What should you choose for lunch to help the environment?",
+      "category": "climate",
+      "hasMiniGame": false,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Local vegetables and fruits", "effect": "good"},
+        {"text": "Beef imported from across the world", "effect": "bad"},
+        {"text": "Plant-based protein (beans, tofu)", "effect": "good"},
+        {"text": "Chicken from local farm", "effect": "good"}
+      ]
+    },
+    "climate7": {
+      "question": "You're buying groceries. Choose your bags:",
+      "category": "waste",
+      "hasMiniGame": false,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Reusable cloth bags (bring your own)", "effect": "good"},
+        {"text": "Single-use plastic bags", "effect": "bad"},
+        {"text": "Paper bags", "effect": "neutral"},
+        {"text": "Ask for no bags, carry items myself", "effect": "good"}
+      ]
+    },
+    "climate8": {
+      "question": "Your old phone is broken. What happens to it?",
+      "category": "waste",
+      "hasMiniGame": false,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Take it to an e-waste recycling center", "effect": "good"},
+        {"text": "Throw it in the trash", "effect": "bad"},
+        {"text": "Give it to a friend to refurbish", "effect": "good"},
+        {"text": "Leave it to rot in a drawer", "effect": "bad"}
+      ]
+    },
+    "climate9": {
+      "question": "A company pollutes a river. You have evidence. What do you do?",
+      "category": "climate",
+      "hasMiniGame": false,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Post evidence on social media", "effect": "good"},
+        {"text": "Report to regulatory agencies", "effect": "good"},
+        {"text": "Tell your friends casually", "effect": "neutral"},
+        {"text": "Do nothing, you're just one person", "effect": "bad"}
+      ]
+    },
+    "climate10": {
+      "question": "Your family wants to install solar panels. React:",
+      "category": "energy",
+      "hasMiniGame": false,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Strongly support it!", "effect": "good"},
+        {"text": "It's too expensive, forget it", "effect": "bad"},
+        {"text": "Push for other family discussions too", "effect": "good"},
+        {"text": "Shrug, doesn't affect me", "effect": "bad"}
+      ]
+    },
+    "climate11": {
+      "question": "You're brushing your teeth. What do you do with the tap?",
+      "category": "water",
+      "hasMiniGame": false,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Leave it running the whole time", "effect": "bad"},
+        {"text": "Turn it off while brushing", "effect": "good"},
+        {"text": "Fill a cup and rinse from it", "effect": "good"},
+        {"text": "Use bottled water instead", "effect": "neutral"}
+      ]
+    },
+    "climate12": {
+      "question": "You're leaving your bedroom. Lights are still on. What happens?",
+      "category": "energy",
+      "hasMiniGame": true,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Turn off the light switch", "effect": "good"},
+        {"text": "Leave it on, someone else will turn it off", "effect": "bad"},
+        {"text": "Replace bulbs with LEDs first", "effect": "good"},
+        {"text": "Install a motion sensor", "effect": "good"}
+      ]
+    },
+    "climate13": {
+      "question": "Your clothes are still good, but new styles emerged. What do you buy?",
+      "category": "waste",
+      "hasMiniGame": false,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Buy from fast fashion brands", "effect": "bad"},
+        {"text": "Keep wearing your current clothes", "effect": "good"},
+        {"text": "Buy secondhand from thrift stores", "effect": "good"},
+        {"text": "Buy ethical, sustainable brands", "effect": "good"}
+      ]
+    },
+    "climate14": {
+      "question": "You discover a local factory pollutes the river. What's your move?",
+      "category": "climate",
+      "hasMiniGame": true,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Organize a community protest", "effect": "good"},
+        {"text": "Report anonymously to environmental agency", "effect": "good"},
+        {"text": "Do nothing, factories provide jobs", "effect": "bad"},
+        {"text": "Join an environmental NGO", "effect": "good"}
+      ]
+    },
+    "climate15": {
+      "question": "Your family wants to switch to renewable energy. What happens?",
+      "category": "energy",
+      "hasMiniGame": false,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "choices": [
+        {"text": "Install solar panels on the roof", "effect": "good"},
+        {"text": "Stay with coal-based electricity", "effect": "bad"},
+        {"text": "Switch to renewable energy provider", "effect": "good"},
+        {"text": "Wait until it's cheaper", "effect": "neutral"}
+      ]
+    }
+  },
+  "templates": {
+    "climateMaster": {
+      "title": "🌍 Climate Change Master",
+      "description": "Complete climate change curriculum with 15 scenarios",
+      "isPublic": true,
+      "teacherId": "HQErGYc1tNanItpaslwGI4hlq753",
+      "events": [
+        "climate1", "climate2", "climate3", "climate4", "climate5",
+        "climate6", "climate7", "climate8", "climate9", "climate10",
+        "climate11", "climate12", "climate13", "climate14", "climate15"
+      ],
+      "eventCount": 15
+    }
+  }
+}
